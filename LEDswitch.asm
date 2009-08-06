@@ -7,6 +7,8 @@
     jmp RESET		; reset
 .ORG 0x0008 
     jmp iPCINT1 ; PCINT1 Handler 
+.ORG 0x0018
+	jmp iWDT	; WDT Handler
 
 .org 0X0040 
 
@@ -52,7 +54,18 @@ RESET:
     sbr r16,1<<PCIE1
     sts PCICR, r16
 
+	; change watchdog prescaler to be ~0.5s
+	wdr
+	lds r16, WDTCSR
+	mov r17, r16
+	sbr r16, (1 << WDCE) 	
+	sts WDTCSR, r16			; enable change, have 4 clk after this for the rest
+	cbr r17, (1 << WDE) | (1 << WDP3) | (1 << WDP1)	
+	sbr r17, (1 << WDP2) | (1 << WDP0) | (1 << WDIE) 				;
+	sts WDTCSR, r17
 
+	eor r20, r20
+	sts $0100, r20
 
 	sei					; enable interrupts
 
@@ -64,14 +77,36 @@ LOOP:
 	
 iPCINT1:
 	cli
+	in r0, SREG
 
-	in r20, PINC
-	in r21, PORTC
-	bst r20, 1
-    bld r21, 0
+	lds r20, $0100
+	com r20
+	sts $0100, r20
+
+
+;	in r20, PINC
+;	in r21, PORTC
+;	bst r20, 1
+;   bld r21, 0
+;	out PORTC, r21
+
+	out SREG, r0
+
+	sei
+	reti
+
+iWDT:
+	cli
+	
+	in r0, SREG
+	
+	lds r20, $0100
+	eor r21, r21
+	bld r21, 0
 	out PORTC, r21
 
 	
+	out SREG, r0
 
 	sei
 	reti
