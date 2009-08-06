@@ -37,14 +37,20 @@ RESET:
 	clr r29
 
 	; PCMSK1/PCINT9 <- 1
-	ldi r28, PCMSK1
-	ldi r16, PCINT9
-	st Y, r16
+;	ldi r28, PCMSK1
+;	ldi r16, 1<<PCINT9
+;	st Y, r16
+    lds r16, PCMSK1
+    sbr r16, 1<<PCINT9
+    sts PCMSK1, r16
 
 	; PCICR/PCIE1 <- 1
-	ldi r28, PCICR
-	ldi r16, PCIE1
-	st Y, r16
+;	ldi r28, PCICR
+;	ldi r16, 1<<PCIE1
+;	st Y, r16
+    lds r16, PCICR
+    sbr r16,1<<PCIE1
+    sts PCICR, r16
 
 
 
