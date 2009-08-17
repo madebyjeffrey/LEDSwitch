@@ -1,14 +1,18 @@
 
-.include "m168def.inc"
+; converting from 168 to 44
+
+; All pages are marked in 8006G-AVR-01/08 datasheet
+
+.include "tn44def.inc"
 
 .cseg
 
 .ORG 0x0000	
-    jmp RESET		; reset
-.ORG 0x0008 
-    jmp iPCINT1 ; PCINT1 Handler 
+    rjmp RESET		; reset
+.ORG 0x0004 
+    rjmp iPCINT1 ; PCINT1 Handler 
 .ORG 0x0018
-	jmp iWDT	; WDT Handler
+	rjmp iWDT	; WDT Handler
 
 .org 0X0040 
 
@@ -24,18 +28,20 @@ RESET:
 	out SPL, r16
 
 
-	; Enable PC1 input (p74)
-	cbi DDRC, 1 		; DDRC/1 <- 0
-	sbi PORTC, 1		; PORTC/1 <- 1
+	; Enable PA0 input (p55)
+	cbi DDRA, DDA0 		; DDRA/DDA0 <- 0
+	sbi PORTA, PORTA0	; PORTA/PORTA0 <- 1
 
-	in r20, MCUCR       ; MCUCR/4 <- 0 (pullup enabled)
-	cbr r20, 32  		
+	in r20, MCUCR       ; MCUCR/PUD <- 0 (pullup enabled)
+	cbr r20, (1 << PUD)  		
 	out MCUCR, r20
 
-	; Enable PC0 output (p74)
-	sbi DDRC, 0			; DDRC/0 <- 1
+	; Enable PA1 output (p55)
+	sbi DDRA, DDA1		; DDRA/DDA1 <- 1
 
 	; PCINT9 enable (p70)
+	
+	;; got up to here
 	
 
 	clr r29
