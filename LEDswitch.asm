@@ -12,6 +12,8 @@
 
 .org 0X0040 
 
+.include "Timer168.asm"
+
 RESET:
 	cli					; disable interrupts
 
