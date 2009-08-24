@@ -36,20 +36,23 @@ RESET:
 	sbi DDRA, DDA1		; DDRA/DDA1 <- 1
 
 	
-	sei					; enable interrupts
+	; GIMSK/PCIE0 enable PCINT0..7
+	ldi r16, 1<<PCIE0
+	out GIMSK, r16
+
+
 	; PCINT0	 enable (p50)	
 	ldi r16, 1<<PCINT0
 	out PCMSK0, r16
 
-	; GIMSK/PCIE0 enable PCINT0..7
-	ldi r16, 1<<PCIE0
-	sts GIMSK, r16
-
 	
+
+	sei					; enable interrupts
 
 
 
 LOOP:
+	sleep
 	rjmp LOOP 
 	
 	
@@ -57,11 +60,11 @@ iPCINT0:
 	cli
 	in r0, SREG
 
-;	in r20, PORTA
-;	ldi r21, 1 << PORTA1 
-;	eor r20, r21
+	in r20, PORTA
+	ldi r21, 1 << PORTA1 
+	eor r20, r21
 
-	ldi r20, 1 << PORTA1
+;	ldi r20, 1 << PORTA1
 	out PORTA, r20
 
 
