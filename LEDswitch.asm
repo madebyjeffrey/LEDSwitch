@@ -1,5 +1,5 @@
 
-
+; Tiny44: Using interrupt to change the LED output
 ; All pages are marked in 8006G-AVR-01/08 datasheet
 
 .include "tn44def.inc"
